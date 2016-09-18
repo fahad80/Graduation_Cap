@@ -1,5 +1,5 @@
 # README #
-This code was written for Arduino mini Pro (3.3V - 8MHz). Interfaced with Neo Pixel LED rings that plays four animations for a graduation cap.
+This code was written for Arduino mini Pro (3.3V - 8MHz). Interfaced with Neo Pixel LED rings it plays four animations for a graduation cap.
 
 ### Important note ###
 
