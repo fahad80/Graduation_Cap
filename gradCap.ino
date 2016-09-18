@@ -43,7 +43,6 @@ uint16_t led[16]={26,25,24,39,38,37,36,35,34,33,32,31,30,29,28,27};
 /****************************** Setup function ******************************/
 void setup() 
 {
-  //Serial.begin(115200);
   strip.begin();
   strip.show();             // Initialize all pixels to 'off'
   strip.setBrightness(60);  // Limit overall brightness to 60% in order to lengethen the battery life 
@@ -60,63 +59,69 @@ void setup()
 }
 
 
+/****************************** Loop function ******************************/
 void loop() 
 {
-  int16_t x; // 'for' loop variables
+  int16_t x;
   int16_t i;
 
   
-/************ Animation 1: Fill the Pixels one after the other ************/
+/**** Animation 1: Fill the Pixels one after the other ****/
   colorWipe(strip.Color(0, 150, 0), 50); // Green
   colorWipe(strip.Color(0, 0, 0), 50);   // off
   delay(1000);
 
 
-
-/****************************** Animation 2 ******************************/
-  glowingCircles(2,50)
+/**** Animation 2: Glow the rings one after the other ****/
+  glowingCircles(2,50);
   delay(1000);
-  
 
+
+/****** Animation 3: Theatre-style crawling lights *******/
   for(i=0; i<151;i=i+10)
   {
-      theaterChase(strip.Color(0, i, 0), 50); // GREEN
+    theaterChase(strip.Color(0, i, 0), 50); // Glowing up
   }
   for(i=150; i>=0;i=i-10)
   {
-    //Serial.println(i);
-    theaterChase(strip.Color(0, i, 0), 50); // GREEN
-  }
-  delay(1000);
-  for(int k=0; k<2;k++)
-  {
-        for(int j=0; j<151;j=j+10)
-        {
-          for (i=0; i < strip.numPixels(); i++) 
-          {
-            strip.setPixelColor(i, strip.Color(0, j, 0));    //turn every third pixel on
-          }
-          strip.show();
-    
-          delay(50);
-        }
-        
-        for(int j=150; j>=0; j=j-10)
-        {
-          for (i=0; i < strip.numPixels(); i++) 
-          {
-            strip.setPixelColor(i, strip.Color(0, j, 0));        //turn every third pixel off
-          }
-          strip.show();
-          delay(50);
-        }
+    theaterChase(strip.Color(0, i, 0), 50); // Glowing down
   }
   delay(1000);
 
-    
+
+
+/******* Animation 4: Glow the rings altogether *********/ 
+  for(int k=0; k<2;k++)
+  {
+      for(int j=0; j<151;j=j+10)
+      {
+        for (i=0; i < strip.numPixels(); i++) 
+        {
+          strip.setPixelColor(i, strip.Color(0, j, 0));
+        }
+        strip.show();
+  
+        delay(50);
+      }
+      
+      for(int j=150; j>=0; j=j-10)
+      {
+        for (i=0; i < strip.numPixels(); i++) 
+        {
+          strip.setPixelColor(i, strip.Color(0, j, 0));
+        }
+        strip.show();
+        delay(50);
+      }
+  }
+  delay(1000);
 }
 
 
+
+
+
+/****************************** User Functions ******************************/
 /*
  * @brief  Fill the Pixels(LEDs) one after the other with a color
  * @param  color_: 32bit color type, 
@@ -158,7 +163,7 @@ void colorWipe(uint32_t color_, uint8_t wait)
  */
 void glowingCircles(uint8_t times, uint8_t wait)
 {
-  uint8_t x;
+  uint8_t x; // 'for' loop variables
   uint8_t i;
   for(uint8_t k = 0; k < times; k++)
   {
@@ -235,48 +240,13 @@ void glowingCircles(uint8_t times, uint8_t wait)
 }
 
 
-
-
-
-
-
 /*
- * @brief  Fill the Pixels(LEDs) one after the other with a color
+ * @brief  Theatre-style crawling lights
  * @param  color_: 32bit color type, 
  *         wait  : delay in ms
  * @retval none
  */
-void rainbow(uint8_t wait) 
-{
-  uint16_t i, j;
-
-  for(j=0; j<256; j++) 
-  {
-    for(i=0; i<strip.numPixels(); i++) 
-    {
-      strip.setPixelColor(i, Wheel((i+j) & 255));
-    }
-    strip.show();
-    delay(wait);
-  }
-}
-
-// Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle(uint8_t wait) 
-{
-  uint16_t i, j;
-
-  for(j=0; j<256*5; j++) { // 5 cycles of all colors on wheel
-    for(i=0; i< strip.numPixels(); i++) {
-      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
-    }
-    strip.show();
-    delay(wait);
-  }
-}
-
-//Theatre-style crawling lights.
-void theaterChase(uint32_t c, uint16_t wait) 
+void theaterChase(uint32_t color_, uint16_t wait) 
 {
   for (int j=0; j<1; j++) 
   {  //do 10 cycles of chasing
@@ -284,10 +254,9 @@ void theaterChase(uint32_t c, uint16_t wait)
     {
       for (uint16_t m=0; m < strip.numPixels(); m=m+3) 
       {
-        strip.setPixelColor(m+q, c);    //turn every third pixel on
+        strip.setPixelColor(m+q, color_);    //turn every third pixel on
       }
       strip.show();
-
       delay(wait);
 
       for (uint16_t m=0; m < strip.numPixels(); m=m+3) 
@@ -297,40 +266,4 @@ void theaterChase(uint32_t c, uint16_t wait)
       strip.show();
     }
   }
-}
-
-//Theatre-style crawling lights with rainbow effect
-void theaterChaseRainbow(uint8_t wait) {
-  for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
-    for (int q=0; q < 3; q++) {
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, Wheel( (i+j) % 255));    //turn every third pixel on
-      }
-      strip.show();
-
-      delay(wait);
-
-      for (uint16_t i=0; i < strip.numPixels(); i=i+3) {
-        strip.setPixelColor(i+q, 0);        //turn every third pixel off
-      }
-    }
-  }
-}
-
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-uint32_t Wheel(byte WheelPos) 
-{
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) 
-  {
-    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  }
-  if(WheelPos < 170) 
-  {
-    WheelPos -= 85;
-    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
-  }
-  WheelPos -= 170;
-  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
 }
