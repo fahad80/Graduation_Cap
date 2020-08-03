@@ -13,5 +13,5 @@ This code was written for Arduino mini Pro (3.3V - 8MHz). Interfaced with Neo Pi
 
 ![Demo gif](/image/demo.gif)
 
-$\sqrt{a^2}$
+
 
